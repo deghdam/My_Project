@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Providers/client.dart';
 import 'package:flutter_app/http.dart';
 import 'package:flutter_app/model/categorie_model.dart';
 import 'package:flutter_app/Screen/home_screen.dart';
 import 'package:flutter_app/Screen/panier.dar.dart';
+import 'package:flutter_app/panie.dart';
+import 'package:flutter_app/tools.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:toast/toast.dart';
 
 class LastScreenCat extends StatefulWidget {
   final Categorie categorie;
@@ -180,28 +185,32 @@ class _LastScreenCatState extends State<LastScreenCat> {
 
               SizedBox(height: 20,),
 
-              SizedBox(
-                width: 300.0,
-                height: 60.0,
-                child: FlatButton(
-                    shape:  RoundedRectangleBorder(
-                        borderRadius:  BorderRadius.circular(30.0)
-                    ),
-                    child:  Text(
-                      'Ajouter aux Favoris',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0
-                      ),
-                    ),
-                    color: Colors.black45,
-                    onPressed: () {
-
-                    }
+              RatingBar.builder(
+                initialRating: 3,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
                 ),
+                onRatingUpdate: (rating) async {
+                  String email = await read('email');
+                  var result = await psotRaitinplat(
+                      email:email,
+                      rating: rating.toString(),
+                      id: widget.categorie.id
+                  );
+                  //  raiting = rating.toString();
+                  // print(rating);
+                  // print(widget.categorie.id);
+                  // print(email);
+                },
               ),
 
-              SizedBox(height: 20,),
+              SizedBox(height: 25,),
 
               SizedBox(
                 width: 300.0,
@@ -218,13 +227,12 @@ class _LastScreenCatState extends State<LastScreenCat> {
                       ),
                     ),
                     color: Colors.black45,
-                    onPressed: () => Navigator.push(context,
-                    MaterialPageRoute(
-                        builder: (_) => PanierScreen(
-                          categorie : widget.categorie,
-                          value: value,
-                        )
-                    )),
+                    onPressed: () {
+                      PanierMethode.AddPlat(widget.categorie);
+                      Toast.show(
+                        'Vous avis Ajouter le plat au panier',context,backgroundColor: Colors.green,duration:5,);
+
+                    }
                 ),
               ),
 

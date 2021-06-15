@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Providers/Plat.dart';
+import 'package:flutter_app/Providers/client.dart';
 import 'file:///F:/app/flutter_app/lib/Widget/categorie_Carousel.dart';
 import 'package:flutter_app/Widget/restaurent_carousel.dart';
 import 'package:flutter_app/Screen/Profil.dart';
@@ -8,10 +10,14 @@ import 'package:flutter_app/Screen/commandeEnAttente.dart';
 import 'package:flutter_app/Screen/mon_panier.dart';
 import 'package:flutter_app/Screen/historiqueclient.dart';
 import 'package:flutter_app/Screen/signin.dart';
+import 'package:flutter_app/model/personne.dart';
+import 'package:flutter_app/tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class HomeScreen extends StatefulWidget {
+  String email;
+  HomeScreen({this.email});
 
 
 
@@ -40,13 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Color(0x44000000),
         elevation: 0,
         actions: [
-
-          Icon(
-            Icons.search,
-            size:35.0,
-            color: Colors.yellow.shade700,
-          ),
-
           Image(
               fit: BoxFit.cover,
               width: 100,
@@ -77,52 +76,66 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       color: Colors.black,
                     ),
-                    child:Column(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage(
-                            'assets/sam.JPG',
-                          ),
-                          radius: 80.0,
-                        ),
-                        SizedBox(height: 10.0),
-                        Text(
-                          'Sami Deghdak',
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white
-                          ),),
-
-                        SizedBox(height: 10.0),
-
-                        GestureDetector(
-                          onTap:() => Navigator.push(context,
-                              MaterialPageRoute(
-                                  builder: (_) => Profil()
-                              )),
-                          child: Container(
-                            color: Colors.black45,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(30.0),
-                              child: Container(
-                                color: Colors.yellow.shade700,
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                                  child: new Text(
-                                    'Voir mon pofil',
+                    child:FutureBuilder<List<Personne>>(
+                      future:Fetchinfoclient(email: widget.email) ,
+                      builder: (context, snapchat) {
+                        if(snapchat.hasData){
+                          return ListView.builder(
+                            itemCount: snapchat.data.length,
+                            itemBuilder:(BuildContext context, index) {
+                              Personne personne = snapchat.data[index];
+                              return Column(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                      'assets/profile.png',
+                                    ),
+                                    radius: 80.0,
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    personne.prenom + ' ' + personne.nom,
                                     style: TextStyle(
                                         fontSize: 25.0,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white
+                                    ),),
+
+                                  SizedBox(height: 10.0),
+
+                                  GestureDetector(
+                                    onTap:() => Navigator.push(context,
+                                        MaterialPageRoute(
+                                            builder: (_) => Profil(personne: personne,)
+                                        )),
+                                    child: Container(
+                                      color: Colors.black45,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                        child: Container(
+                                          color: Colors.yellow.shade700,
+                                          child: Padding(
+                                            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                                            child: new Text(
+                                              'Voir mon pofil',
+                                              style: TextStyle(
+                                                  fontSize: 25.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                                ],
+                              );
+
+                            },);
+
+                        } else return Container();
+                      },
                     )
 
                 ),
@@ -147,13 +160,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 onTap: () async {
-                  final  prefs = await SharedPreferences.getInstance();
-                  final key = 'email';
-                   String email = prefs.getString(key);
-                 // print(email);
+                 var email= await read('email');
                   Navigator.push(context,
                       MaterialPageRoute(
-                          builder: (_) =>FavorisScreen( email: email,)
+                          builder: (_) =>FavorisScreen(email)
                       ));
                 },
                 leading: Icon(Icons.star,
@@ -166,10 +176,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),),
               ),
               ListTile(
-                onTap: (){
+                onTap: () async {
+                  var email= await read('email');
                   Navigator.push(context,
                       MaterialPageRoute(
-                          builder: (_) =>HistoriqueClient()
+                          builder: (_) =>HistoriqueClient(email : email)
                       ));
                 },
                 leading: Icon(Icons.history,
@@ -186,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   final  prefs = await SharedPreferences.getInstance();
                   final key = 'email';
                   String email = prefs.getString(key);
-                   print(email);
+                  // print(email);
                   Navigator.push(context,
                       MaterialPageRoute(
                           builder: (_) =>CommandeEnAttente(
@@ -212,14 +223,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(30.0),
                   child: RaisedButton(
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                    onPressed: () => {
-                      Navigator.push(context,
-                    MaterialPageRoute(
-                    builder: (_) =>SignIn()
-                    )
-                    )
+                    onPressed: () async{
+                      var result = await Deconnexionclient();
+                    if(result["statusCode"] == 200){
+                      Navigator.pushReplacementNamed(
+                          context,'/signin');
+                    }
 
-                    },
+                      },
                     child: new Text(
                       'Déconnexion',
                       style: TextStyle(

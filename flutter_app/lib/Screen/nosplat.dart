@@ -6,7 +6,9 @@ import 'package:flutter_app/Screen/lastscreencat.dart';
 import 'package:flutter_app/Screen/panier.dar.dart';
 import 'package:flutter_app/http.dart';
 import 'package:flutter_app/model/categorie_model.dart';
+import 'package:flutter_app/panie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 
 
@@ -22,7 +24,7 @@ class _NosPlatState extends State<NosPlat> {
   String email;
   @override
   Widget build(BuildContext context) {
-    //  print(widget.id);
+      //print(widget.id);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -52,7 +54,7 @@ class _NosPlatState extends State<NosPlat> {
         constraints: BoxConstraints.expand(),
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("assets/background_gest.png"),
+                image: AssetImage("assets/Background.png"),
                 fit: BoxFit.cover)),
         child: FutureBuilder<List<Categorie>>(
           future: FetchPlatResto(id : widget.id),
@@ -192,6 +194,10 @@ class _NosPlatState extends State<NosPlat> {
                                                 email: email ,
                                                 id_plat: categorie.id,
                                               );
+                                              if(result['statusCode'] == 201){
+                                                Toast.show(
+                                                  'vous avez Ajoutè le plat au favoris',context,backgroundColor: Colors.green,duration:5,);
+                                              }
 
                                             },
                                             elevation: 2.0,
@@ -206,12 +212,9 @@ class _NosPlatState extends State<NosPlat> {
                                           ),
                                           RawMaterialButton(
                                             onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (_) => PanierScreen(
-                                                        categorie: categorie,
-                                                      )));
+                                              PanierMethode.AddPlat(categorie);
+                                              Toast.show(
+                                            'vous avez Ajoutè le plat au panier',context,backgroundColor: Colors.green,duration:5,);
                                             },
                                             elevation: 2.0,
                                             fillColor: Colors.black45,
@@ -241,10 +244,11 @@ class _NosPlatState extends State<NosPlat> {
               );
 
             }
-            else return Container();
+             else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
           },
         ),
       ),
     );
   }
 }
+

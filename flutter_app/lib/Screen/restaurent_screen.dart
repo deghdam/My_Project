@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Providers/client.dart';
 import 'package:flutter_app/Screen/nosplat.dart';
 import 'package:flutter_app/http.dart';
 import 'package:flutter_app/model/restaurent_model.dart';
+import 'package:flutter_app/tools.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:toast/toast.dart';
 
 class RestaurentScreen extends StatefulWidget {
   final Restaurent restaurent;
@@ -14,6 +17,7 @@ class RestaurentScreen extends StatefulWidget {
 }
 
 class _RestaurentScreenState extends State<RestaurentScreen> {
+  String raiting;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -271,8 +275,18 @@ class _RestaurentScreenState extends State<RestaurentScreen> {
                    Icons.star,
                    color: Colors.amber,
                   ),
-                  onRatingUpdate: (rating) {
-                   print(rating);
+                  onRatingUpdate: (rating) async {
+                      String email = await read('email');
+                    var result = await psotRaitingresto(
+                       email:email,
+                      id: widget.restaurent.id.toString(),
+                      rating: rating.toString()
+                    );
+                      if(result['statusCode'] == 201){
+                        Toast.show(
+                          'votre note a été enregistré',context,backgroundColor: Colors.green,duration:5,);
+                      } else Toast.show(
+                        'vous avez déja donné une note',context,backgroundColor: Colors.redAccent,duration:5,);
                    },
                ),
 

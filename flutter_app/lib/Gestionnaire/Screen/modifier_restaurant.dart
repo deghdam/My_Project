@@ -8,6 +8,7 @@ import 'package:flutter_app/Gestionnaire/Screen/mn_resto.dart';
 import 'package:flutter_app/Providers/client.dart';
 import 'package:flutter_app/http.dart';
 import 'package:flutter_app/model/categorie_model.dart';
+import 'package:flutter_app/model/commande.dart';
 import 'package:flutter_app/model/restaurent_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +31,15 @@ class _ModifierRestState extends State<ModifierRest> {
   final _HoraireController = TextEditingController();
   final _phoneController = TextEditingController();
   final _adresseController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _nomrestaurantController.text =  widget.restaurent.name;
+    _HoraireController.text =  widget.restaurent.Horaire;
+    _phoneController.text =  widget.restaurent.phone.toString();
+    _adresseController.text =  widget.restaurent.location;
+  }
   @override
   Widget build(BuildContext context) {
    // print(widget.id);
@@ -225,6 +235,7 @@ class _ModifierRestState extends State<ModifierRest> {
                                 String email = prefs.getString(key);
                                 // print(email);
                                 // print(_adresseController);
+                                // var image=_imageFile==null?null: await _imageFile.readAsBytes();
                                 var result = await Modifierresto(
                                    // email:email,
                                     phone:_phoneController.text,
@@ -235,6 +246,16 @@ class _ModifierRestState extends State<ModifierRest> {
                                 );
 
                                 if (result['statusCode'] == 200) {
+                                  if(_imageFile != null){
+                                  File file=File(_imageFile.path);
+                                  bool result= await uploadFile(file: file,type: 'restaurant',id: widget.restaurent.id.toString());
+                                  if(!result){
+
+                                  }
+                                  else{
+
+                                  }
+                                  }
                                   Navigator.pop(
                                       context,
                                       MaterialPageRoute(
@@ -264,8 +285,16 @@ class _ModifierRestState extends State<ModifierRest> {
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-        Image.network(
-            _imageFile == null ? imagesUrl + widget.restaurent.imageUrl : FileImage(File(_imageFile.path)),fit: BoxFit.cover,
+       (_imageFile!=null)?
+      Container(
+          width:double.infinity,height: 250
+        ,
+        child: Semantics(
+            child: Image.file(File(_imageFile.path),fit: BoxFit.cover
+              ,),),
+      )
+          : Image.network(
+             imagesUrl + widget.restaurent.imageUrl,fit: BoxFit.cover,
 
         ),
 

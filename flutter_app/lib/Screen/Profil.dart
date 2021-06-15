@@ -1,12 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Widget/modifierProfil.dart';
+import 'package:flutter_app/model/personne.dart';
 
 
 class Profil extends StatefulWidget {
-  final Profil profil;
+  Personne personne;
 
-  Profil({ this.profil});
+  Profil({ this.personne});
   @override
   _ProfilState createState() => _ProfilState();
 }
@@ -56,7 +57,7 @@ class _ProfilState extends State<Profil> {
               SizedBox(height: 100.0,),
               CircleAvatar(
                 backgroundImage: AssetImage(
-                  'assets/sam.JPG',
+                  'assets/profile.png',
                 ),
                 radius: 80.0,
               ),
@@ -105,23 +106,13 @@ class _ProfilState extends State<Profil> {
 
                           ),),
 
-                        SizedBox( height:20.0),
-
-                        Text(
-                          'Adresse',
-                          style: TextStyle(
-                            fontSize: 25.0,
-                            color: Colors.white,
-
-                          ),),
-
                       ],
                     ),
                      Column(
                        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                        children: [
                          Text(
-                           'Deghdak',
+                           widget.personne.nom,
                            style: TextStyle(
                              fontSize: 25.0,
                              color: Colors.white,
@@ -132,7 +123,7 @@ class _ProfilState extends State<Profil> {
                          SizedBox( height:20.0),
 
                          Text(
-                           'Sami',
+                           widget.personne.prenom,
                            style: TextStyle(
                              fontSize: 25.0,
                              color: Colors.white,
@@ -143,7 +134,7 @@ class _ProfilState extends State<Profil> {
                          SizedBox( height:20.0),
 
                          Text(
-                           '03151528',
+                           widget.personne.phone,
                            style: TextStyle(
                              fontSize: 25.0,
                              color: Colors.white,
@@ -154,23 +145,10 @@ class _ProfilState extends State<Profil> {
                          SizedBox( height:30.0),
 
                          Text(
-                           'samideghdak@gmail.com',
+                           widget.personne.email,
                            style: TextStyle(
                              fontSize: 17.0,
                              color: Colors.white,
-
-                           ),
-                         ),
-
-                         SizedBox( height:30.0),
-
-                         Text(
-                           'Sidi Mabrouk Constantine',
-                           style: TextStyle(
-                             fontSize: 17.0,
-                             color: Colors.white,
-                             overflow: TextOverflow.ellipsis,
-
 
                            ),
                          ),

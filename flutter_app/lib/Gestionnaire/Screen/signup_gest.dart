@@ -361,12 +361,13 @@ class _SignUpGestState extends State<SignUpGest> {
                                 );
 
                                 if (result['statusCode'] == 201) {
+                                  FocusScope.of(context).requestFocus(new FocusNode());
                                   Navigator.pop(
                                       context,
                                       MaterialPageRoute(
                                           builder: (_) => SigninGest()));
                                   Toast.show(
-                                    'Vous avez bien inscrit ',context,backgroundColor: Colors.redAccent,);
+                                    'Vous avez bien inscrit ',context,backgroundColor: Colors.redAccent,duration:5);
 
                                 } else {
                                   Toast.show(

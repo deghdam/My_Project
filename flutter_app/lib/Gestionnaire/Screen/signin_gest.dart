@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Gestionnaire/home_Ges.dart';
 import 'package:flutter_app/Providers/client.dart';
 import 'package:flutter_app/http.dart';
+import 'package:flutter_app/tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
@@ -129,22 +130,28 @@ class _SigninGestState extends State<SigninGest> {
                               ),
                               color: Colors.yellow[700],
                               onPressed: () async {
+                                FocusScope.of(context).requestFocus(new FocusNode());
+                                Toast.show(
+                                  'Authentification en cours ...',context,backgroundColor: Colors.green,duration:5,);
+
                                 if (_signupKey.currentState.validate()) {
                                   var result = await AutGest(
                                       email: _emailController.text,
                                       password: _passwordController.text);
-                                 // print(result['statusCode']);
                                   if (result['statusCode'] == 201) {
+
+                                    Toast.show('Authentification avec succes',context,backgroundColor: Colors.green,duration:5,);
 
                                     var jsonResponse =
                                     convert.jsonDecode(result['response']) as Map<String, dynamic>;
                                     var email = jsonResponse['gestionnaire'][0]['email'];
                                     var itemCount =jsonResponse['gestionnaire'][0]['id'];
-                                    save(email);
+                                    save(key: 'token',value:jsonResponse['token']);
+                                    saved(email);
                                    // print(itemCount);
                                     Navigator.push(context,
                                         MaterialPageRoute(
-                                            builder: (_) =>HomeGest(id:itemCount,)
+                                            builder: (_) =>HomeGest(id:itemCount,email: email,)
                                         ));
                                   } else {
                                     Toast.show(
@@ -181,7 +188,7 @@ class _SigninGestState extends State<SigninGest> {
                 ]))));
   }
 
-        save(String email) async {
+        saved(String email) async {
           final prefs = await SharedPreferences.getInstance();
           final key = 'email';
           final value = email;

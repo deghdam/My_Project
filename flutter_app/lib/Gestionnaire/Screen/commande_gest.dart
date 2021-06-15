@@ -111,7 +111,7 @@ class _CommandeGestHomeState extends State<CommandeGestHome> {
                   );
                 }
 
-              else return Container();
+              else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
 
               },
 

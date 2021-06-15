@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Providers/client.dart';
 import 'package:flutter_app/Providers/restaurent.dart';
 import 'package:flutter_app/http.dart';
 import 'package:flutter_app/model/commande.dart';
+import 'package:toast/toast.dart';
 
 class CommandeEnAttente extends StatefulWidget {
   String email;
@@ -32,13 +34,6 @@ class _CommandeEnAttenteState extends State<CommandeEnAttente> {
           backgroundColor: Color(0x44000000),
           elevation: 0,
           actions: [
-
-            Icon(
-              Icons.search,
-              size:35.0,
-              color: Colors.yellow.shade700,
-            ),
-
             Image(
                 fit: BoxFit.cover,
                 width: 100,
@@ -70,6 +65,7 @@ class _CommandeEnAttenteState extends State<CommandeEnAttente> {
                     itemCount: snapchat.data.length,
                     itemBuilder: (context, index) {
                       Commande commande = snapchat.data[index];
+                     // print(commande.id.toString());
                       return Column(
                         children: [
                           Container(
@@ -138,27 +134,21 @@ class _CommandeEnAttenteState extends State<CommandeEnAttente> {
                                             SizedBox(height: 3,),
 
 
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  commande.nomresto,
-                                                  style: TextStyle(
-                                                      fontSize: 18.0,
-                                                      fontWeight: FontWeight.w500,
-                                                      color: Colors.white
-                                                  ),
-                                                ),
-
-                                                Text(
-                                                  commande.date,
-                                                  style: TextStyle(
-                                                      fontSize: 18.0,
-                                                      fontWeight: FontWeight.w500,
-                                                      color: Colors.white
-                                                  ),
-                                                ),
-                                              ],
+                                            Text(
+                                              commande.nomresto,
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white
+                                              ),
+                                            ),
+                                            Text(
+                                              "Date de Livraison : " + commande.date,
+                                              style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white
+                                              ),
                                             ),
                                             SizedBox(height: 3,),
 
@@ -172,38 +162,35 @@ class _CommandeEnAttenteState extends State<CommandeEnAttente> {
                             )
                           ),
 
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0.0,0.0,0.0,10),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(30.0),
-                              child: Container(
-                                color: Colors.yellow.shade700,
-                                child: RaisedButton(
-                                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                                  // onPressed: () => {
-                                  //   Navigator.push(context,
-                                  //       MaterialPageRoute(
-                                  //           builder: (_) =>SignIn()
-                                  //       )
-                                  //   )
-                                  //
-                                  // },
-                                  child: Container(
-                                    color: Colors.yellow.shade700,
-                                    child: new Text(
-                                      'Annuler',
-                                      style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white
-                                      ),
-                                    ),
-                                  ),
-                                  //color: Colors.yellow.shade700,
+                           GestureDetector(
+                             onTap: () async {
+                               var result = await AnnulerCommander(
+                                 id_commande: commande.id
+                               );
+                              // print(result['statusCode']);
+                                  if (result['statusCode'] == 200) {
+                                    Toast.show(
+                                      'Vous avez annulé votre commande', context,
+                                      backgroundColor: Colors.redAccent, duration: 5,);
+                                    Navigator.pop(context);
+                                  }
+                               },
+                             child:  Container(
+                               padding: EdgeInsets.all(15),
+                               decoration: BoxDecoration(
+                                 borderRadius:BorderRadius.circular(30.0),
+                                 color: Colors.red,
+                               ),
+                               child: Text(
+                                'Annuler',
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white
                                 ),
-                              ),
-                            ),
                           ),
+                             ),
+                           ),
 
                         ],
                       );
@@ -212,7 +199,7 @@ class _CommandeEnAttenteState extends State<CommandeEnAttente> {
                 );
               }
 
-              else return Container();
+              else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
 
             },
 

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Providers/client.dart';
 import 'package:flutter_app/tools.dart';
 
-class ModifierProfil extends StatefulWidget {
+class ModifierProfilgest extends StatefulWidget {
   @override
-  _ModifierProfilState createState() => _ModifierProfilState();
+  _ModifierProfilgestState createState() => _ModifierProfilgestState();
 }
 
-class _ModifierProfilState extends State<ModifierProfil> {
+class _ModifierProfilgestState extends State<ModifierProfilgest> {
   final _newpasswordController = TextEditingController();
   final _oldPasswordController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -50,7 +50,7 @@ class _ModifierProfilState extends State<ModifierProfil> {
           constraints: BoxConstraints.expand(),
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage("assets/Background.png"),
+                  image: AssetImage("assets/background_gest.png"),
                   fit: BoxFit.cover
               )),
 
@@ -224,13 +224,13 @@ class _ModifierProfilState extends State<ModifierProfil> {
                           child: RaisedButton(
                             onPressed: () async {
                               String email = await read('email');
-                              var result = await ModifierCompte(
-                                 email:email,
-                                 name:_nomController.text,
-                                prenom: _prenomController.text,
-                                phone: _phoneController.text,
-                                password:_newpasswordController.text ,
-                                confirmpassword:_oldPasswordController.text
+                              var result = await ModifierCompteGest(
+                                  email:email,
+                                  name:_nomController.text,
+                                  prenom: _prenomController.text,
+                                  phone: _phoneController.text,
+                                  password:_newpasswordController.text ,
+                                  confirmpassword:_oldPasswordController.text
                               );
                               print(_nomController.text);
                               print(_prenomController.text);

@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Providers/client.dart';
+import 'package:flutter_app/tools.dart';
+import 'package:geocoding/geocoding.dart' as geo;
+import 'package:geolocator/geolocator.dart';
 import 'package:toast/toast.dart';
+// import 'package:geocoding/geocoding.dart' as gecod;
+//enum Permission{ AccessCoarseLocation,AccessFineLocation,WhenInUseLocation}
 
 class SignUp extends StatefulWidget {
+
   @override
   _SignUpState createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
+  String _currentAddress;
+  Position _currentPosition;
+
 
   final GlobalKey<FormState> _signupKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
@@ -24,6 +33,7 @@ class _SignUpState extends State<SignUp> {
     _confirmPasswordController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,8 +77,8 @@ class _SignUpState extends State<SignUp> {
                       Container(
                         margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
                         child: TextFormField(
-                            validator: (String value){
-                              if(value.isEmpty){
+                            validator: (String value) {
+                              if (value.isEmpty) {
                                 return 'Nom ne peut pas être vide';
                               }
                               return null;
@@ -92,8 +102,8 @@ class _SignUpState extends State<SignUp> {
                       Container(
                         margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
                         child: TextFormField(
-                            validator: (String value){
-                              if(value.isEmpty){
+                            validator: (String value) {
+                              if (value.isEmpty) {
                                 return 'Prénom ne peut pas être vide';
                               }
                               return null;
@@ -117,8 +127,8 @@ class _SignUpState extends State<SignUp> {
                       Container(
                         margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
                         child: TextFormField(
-                            validator: (String value){
-                              if(value.isEmpty){
+                            validator: (String value) {
+                              if (value.isEmpty) {
                                 return 'Email ne peut pas être vide';
                               }
                               return null;
@@ -140,11 +150,22 @@ class _SignUpState extends State<SignUp> {
                             )
                         ),
                       ),
+
+                      if (_currentAddress != null) Text(
+                          _currentAddress,style: TextStyle(fontSize: 20,color: Colors.white),
+                      ),
+                      FlatButton(
+                        child: Text("Get location"),
+                        onPressed: () {
+                          _getCurrentLocation();
+                          //print(_currentPosition.latitude);
+                        },
+                      ),
                       Container(
                         margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
                         child: TextFormField(
-                            validator: (String value){
-                              if(value.isEmpty){
+                            validator: (String value) {
+                              if (value.isEmpty) {
                                 return 'Téléphone ne peut pas être vide';
                               }
                               return null;
@@ -169,11 +190,11 @@ class _SignUpState extends State<SignUp> {
                       Container(
                         margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 20.0),
                         child: TextFormField(
-                            validator: (String value){
-                              if(value.isEmpty){
+                            validator: (String value) {
+                              if (value.isEmpty) {
                                 return 'Mot de passe ne peut pas être vide';
                               }
-                              else if(value.length < 6){
+                              else if (value.length < 6) {
                                 return 'Mot de passe trop court';
                               }
                               return null;
@@ -236,8 +257,8 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                             color: Colors.yellow[700],
-                            onPressed: () async{
-                              if(_signupKey.currentState.validate()){
+                            onPressed: () async {
+                              if (_signupKey.currentState.validate()) {
                                 int value = int.parse(_phoneController.text);
                                 var result = await SignupClient(
                                   password: _passwordController.text,
@@ -245,20 +266,25 @@ class _SignUpState extends State<SignUp> {
                                   nom: _nomController.text,
                                   prenom: _prenomController.text,
                                   passwordconf: _confirmPasswordController.text,
-                                  phone:value.toString(),
+                                  phone: value.toString(),
+                                  laltitude: _currentPosition.latitude.toString(),
+                                  longitude: _currentPosition.longitude.toString(),
+                                  adress: _currentAddress,
                                 );
-                                // print(result['statusCode']);
+                                // print(_currentAddress);
 
                                 if (result['statusCode'] == 201) {
+                                  FocusScope.of(context).requestFocus(new FocusNode());
                                   Navigator.pushNamed(context, '/signin');
                                   Toast.show(
-                                      'Vous avez bien inscrit ',context,backgroundColor: Colors.redAccent,);
-
+                                    'Vous avez bien inscrit ', context,
+                                    backgroundColor: Colors.green,duration: 5);
                                 } else {
                                   Toast.show(
-                                      'Inmformations incorrect',context,backgroundColor: Colors.redAccent,duration:5);
+                                      'Inmformations incorrect', context,
+                                      backgroundColor: Colors.redAccent,
+                                      duration: 5);
                                 }
-
                               }
                             }),
                       ),
@@ -303,4 +329,38 @@ class _SignUpState extends State<SignUp> {
         )
     );
   }
+
+  _getAddressFromLatLng() async {
+    try {
+      List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
+          _currentPosition.latitude,
+          _currentPosition.longitude
+      );
+
+      geo.Placemark place = placemarks[0];
+
+      setState(() {
+        _currentAddress =
+        "${place.locality}, ${place.postalCode}, ${place.country}";
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  _getCurrentLocation() {
+    final Geolocator geolocator = Geolocator()
+      ..forceAndroidLocationManager;
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+        _getAddressFromLatLng();
+      });
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
 }

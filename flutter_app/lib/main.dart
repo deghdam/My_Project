@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Gestionnaire/Screen/signin_gest.dart';
 import 'package:flutter_app/Gestionnaire/Screen/signup_gest.dart';
 import 'file:///F:/app/flutter_app/lib/Screen/home_screen.dart';
 import 'package:flutter_app/Screen/choix.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
           '/signin': (BuildContext ctx) => SignIn(),
           '/signup': (BuildContext ctx) => SignUp(),
           '/signupgest': (BuildContext ctx) => SignUpGest(),
+          '/signingest': (BuildContext ctx) => SigninGest(),
 
         },
       home:Choix()

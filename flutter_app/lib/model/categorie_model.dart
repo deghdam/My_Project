@@ -10,8 +10,10 @@ class Categorie{
   String name;
   String prix;
   String nresto;
+  String id_resto;
   String raiting;
   String ingredien;
+  String quantite;
 
 
 
@@ -26,8 +28,11 @@ Categorie({
   this.name,
   this.prix,
   this.nresto,
+  this.id_resto,
   this.raiting,
   this.ingredien,
+  this.quantite
+
 });
 }
 

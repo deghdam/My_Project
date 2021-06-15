@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Providers/client.dart';
 import 'package:flutter_app/Screen/home_screen.dart';
+import 'package:flutter_app/tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
@@ -125,19 +128,25 @@ class _SignInState extends State<SignIn> {
                               ),
                               color: Colors.yellow[700],
                               onPressed: () async {
-                               // Navigator.pushNamed(context, '/home');
-                               // return;
+                                FocusScope.of(context).requestFocus(new FocusNode());
+                                Toast.show(
+                                  'Authentification en cours ...',context,backgroundColor: Colors.green,duration:5,);
                                 if (_signupKey.currentState.validate()) {
                                   var result = await AutClient(
                                       email: _emailController.text,
                                       password: _passwordController.text);
                                   if (result['statusCode'] == 201) {
-                                 //   String email = _emailController.text;
-                                    save(_emailController.text);
+                                  //  print(result["response"]);
+                                    Toast.show('Authentification avec succes',context,backgroundColor: Colors.green,duration:5,);
+                                    save(key: 'email',value: _emailController.text);
+                                    var jsonResponse = jsonDecode(result['response']) as Map<String, dynamic>;
+                                    save(key: 'token',value:jsonResponse['token']);
+
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (_) => HomeScreen(
+                                              email:_emailController.text ,
 
                                             )));
                                   } else {
@@ -175,13 +184,7 @@ class _SignInState extends State<SignIn> {
                 ]))));
   }
 
-        save(String email) async {
-          final prefs = await SharedPreferences.getInstance();
-          final key = 'email';
-          final value = email;
-          prefs.setString(key, value);
-        //  print(value);
-        }
+
 
 
 }

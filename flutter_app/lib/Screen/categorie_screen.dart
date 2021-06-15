@@ -8,7 +8,9 @@ import 'package:flutter_app/model/categorie_model.dart';
 import 'file:///F:/app/flutter_app/lib/Widget/categorie_Carousel.dart';
 import 'package:flutter_app/Screen/lastscreencat.dart';
 import 'package:flutter_app/Screen/panier.dar.dart';
+import 'package:flutter_app/panie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class CategorieScreen extends StatefulWidget {
   final Categorie categorie;
@@ -39,9 +41,9 @@ class _CategorieScreenState extends State<CategorieScreen> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           title: Text(
-            widget.categorie.type,
+           widget.categorie.name,
             style: TextStyle(
-              fontSize: 25.0,
+              fontSize: 20.0,
               fontWeight: FontWeight.w600,
               color: Colors.yellow.shade700,
             ),
@@ -50,11 +52,6 @@ class _CategorieScreenState extends State<CategorieScreen> {
           backgroundColor: Color(0x44000000),
           elevation: 0,
           actions: [
-            Icon(
-              Icons.search,
-              size: 35.0,
-              color: Colors.yellow.shade700,
-            ),
             Image(
                 fit: BoxFit.cover,
                 width: 100,
@@ -71,8 +68,7 @@ class _CategorieScreenState extends State<CategorieScreen> {
                     image: AssetImage("assets/Background.png"),
                     fit: BoxFit.cover)),
             child: FutureBuilder<List<Categorie>>(
-              future: FetchPlat(categorie: widget.categorie.type.toLowerCase()),
-              initialData: null,
+              future: FetchPlat(categorie: widget.categorie.name),
               builder: (context, snapchat) {
                 if (snapchat.hasData) {
                   return ListView.builder(
@@ -83,7 +79,7 @@ class _CategorieScreenState extends State<CategorieScreen> {
                     },
                   );
                 }
-                else return Container();
+                else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
               },
             )));
   }
@@ -216,7 +212,11 @@ class _CategorieScreenState extends State<CategorieScreen> {
                                   email: email ,
                                   id_plat: categorie.id,
                               );
-                             // print (result['statusCode']);
+                             // print(result['statusCode']);
+                             if(result['statusCode'] == 201){
+                               Toast.show(
+                                 'vous avez Ajoutè le plat au favoris',context,backgroundColor: Colors.green,duration:5,);
+                             }
 
                             },
                             elevation: 2.0,
@@ -231,13 +231,9 @@ class _CategorieScreenState extends State<CategorieScreen> {
                           ),
                           RawMaterialButton(
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => PanierScreen(
-                                            categorie: categorie,
-                                            value: value,
-                                          )));
+                              PanierMethode.AddPlat(categorie);
+                              Toast.show(
+                                'vous avez Ajoutè le plat au panier',context,backgroundColor: Colors.green,duration:5,);
                             },
                             elevation: 2.0,
                             fillColor: Colors.black45,

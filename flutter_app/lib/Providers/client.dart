@@ -25,7 +25,7 @@ Future<Map<String,dynamic>> AutGestfavori({String email, String id_plat})async{
  return res;
 }
 
-Future<Map<String,dynamic>> SignupClient({String email,String password,String phone,String nom,String prenom,String passwordconf})async{
+Future<Map<String,dynamic>> SignupClient({String email,String password,String adress,String phone,String nom,String prenom,String passwordconf,String laltitude,String longitude})async{
  Map<String,dynamic> res= await myHttpPost(route: 'client/register',body: {
   'email': email,
   'password': password,
@@ -33,7 +33,13 @@ Future<Map<String,dynamic>> SignupClient({String email,String password,String ph
   'firstname': prenom,
   'lastname': nom,
   'password_confirmation':passwordconf,
+  'latitude' :laltitude,
+  'longitude' :longitude,
+  'delivery_adress':adress,
+
+
  });
+ //print(res["statusCode"]);
  return res;
 }
 Future<Map<String,dynamic>> SignupGest({String email,password, phonegest,phoneresto, nom,prenom, passwordconf,adress,nomresto,horaire})async{
@@ -49,7 +55,7 @@ Future<Map<String,dynamic>> SignupGest({String email,password, phonegest,phonere
   'restaurantphone':phoneresto,
   'adress':adress,
  });
- //   print(res['statusCode']);
+ //  print(res['statusCode']);
  return res;
 }
 
@@ -61,7 +67,12 @@ Future<Map<String,dynamic>> Modifierresto({String phone,String horaire,String no
   'name': nomresto,
   'adress':adresse,
  });
- print(res["statusCode"]);
+ //print(res["statusCode"]);
+ return res;
+}
+Future<Map<String,dynamic>> Deconnexionclient()async{
+ Map<String,dynamic> res= await myHttpPost(route: 'client/logout',body: {});
+ //print(res["statusCode"]);
  return res;
 }
 
@@ -72,7 +83,50 @@ Future<Map<String,dynamic>> Modifierplat({String ingrediant,String prix,String n
   'ingredients':ingrediant,
   'price': prix,
  });
- print(res["statusCode"]);
+ //print(res["statusCode"]);
+ return res;
+}
+Future<Map<String,dynamic>> ModifierCompte({String name,String prenom,String password,String confirmpassword,String phone,String email})async{
+ Map<String,dynamic> res= await MHttpPost(route: 'client/update' ,params: email  ,body: {
+  // 'email_gestionnaire': email,
+  'firstname':prenom,
+  'lastname': name,
+  'oldpassword':confirmpassword,
+  'password':password,
+  'phone':phone
+ });
+ //print(res["statusCode"]);
+ return res;
+}
+Future<Map<String,dynamic>> ModifierCompteGest({String name,String prenom,String password,String confirmpassword,String phone,String email})async{
+ Map<String,dynamic> res= await MHttpPost(route: 'gestionnaire/update' ,params: email  ,body: {
+  // 'email_gestionnaire': email,
+  'firstname':prenom,
+  'lastname': name,
+  'oldpassword':confirmpassword,
+  'password':password,
+  'phone':phone
+ });
+// print(res["statusCode"]);
+ return res;
+}
+Future<Map<String,dynamic>> psotRaitingresto({String id,String email,String rating})async{
+ Map<String,dynamic> res= await myHttpPost(route: 'rating_restaurant/store',body: {
+  // 'email_gestionnaire': email,
+  'email_client':email,
+  'id_restaurant': id,
+  'rating':rating,
+ });
+// print(res["statusCode"]);
+ return res;
+}
+Future<Map<String,dynamic>> psotRaitinplat({String id,String email,String rating})async{
+ Map<String,dynamic> res= await myHttpPost(route: 'rating_plat/store',body: {
+  // 'email_gestionnaire': email,
+  'email_client':email,
+  'id_plat': id,
+  'rating':rating,
+ });
  return res;
 }
 
@@ -86,7 +140,7 @@ Future<Map<String,dynamic>> Ajouterplat({String ingrediant,String prix,String na
   'id_restaurant':id,
 
  });
- print(res["statusCode"]);
+ //print(res["statusCode"]);
  return res;
 }
 
@@ -99,5 +153,27 @@ Future<Map<String,dynamic>> ApprouverCommande({String id})async{
 Future<Map<String,dynamic>> RefuserCommande({String id})async{
  Map<String,dynamic> res= await MHttpPost(route: 'commande/refuser' ,params: id  ,body: {});
 // print(res["statusCode"]);
+ return res;
+}
+
+Future<Map<String,dynamic>> Commander({String email,String time,String id_plat,String id_restaurant,String adress,String methode,String adresse,String quantite,String latitude,String longitude})async{
+ Map<String,dynamic> res= await myHttpPost(route: 'commande/store',body: {
+  'email_client': email,
+  'date': time,
+  'id_restaurant': id_restaurant,
+  'plat_id': id_plat,
+  'delivery_adress': adresse,
+  'payment_method':methode,
+  'quantité':quantite,
+  'longitude':longitude,
+  'latitude':latitude,
+  'adress':adress,
+ });
+ // print(res["statusCode"]);
+ return res;
+}
+Future<Map<String,dynamic>> AnnulerCommander({String id_commande})async{
+ Map<String,dynamic> res= await MHttpPost(route: 'commande/annuler',params: id_commande,body: {});
+ //print( res["statusCode"]);
  return res;
 }

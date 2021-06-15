@@ -67,124 +67,106 @@ class _HistoriqueCommandeGestState extends State<HistoriqueCommandeGest> {
                       Commande commande = snapchat.data[index];
                       return Container(
                        // width: 200,
-                        child: Row(
+                        child: Column(
                           children: [
-                            Column(
-                              children: [
-                                Container(
-                                  height: 150,
-                                  width: 290,
-                                  margin: EdgeInsets.fromLTRB(10, 10.0, 2.0, 10.0),
-                                  color: Colors.black12,
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(15.0,0.0,5.0,0.0),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                            Container(
+                              height: 150,
+                              width: double.infinity,
+                              margin: EdgeInsets.fromLTRB(15, 10.0, 15.0, 10.0),
+                              color: Colors.black12,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(15.0,0.0,5.0,0.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
 
+                                      children: [
+                                        Text(
+                                          commande.nomcommande,
+                                          style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white
+                                          ),
+                                        ),
+
+                                        SizedBox(height: 3,),
+
+                                        Text(
+                                          'Quantité : ' + commande.quantite.toString(),
+                                          style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white
+                                          ),
+                                        ),
+                                        Text(
+                                          'Etat : ' + commande.Etat,
+                                          style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white
+                                          ),
+                                        ),
+                                        SizedBox(height: 3,),
+
+
+                                        Text(
+                                          commande.deliveryadress,
+                                          style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white
+                                          ),
+                                        ),
+                                        SizedBox(height: 3,),
+
+
+                                        Text(
+                                          commande.date,
+                                          style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white
+                                          ),
+                                        ),
+                                        SizedBox(height: 3,),
+
+
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              commande.nomcommande,
+                                              commande.prix + ' DA',
                                               style: TextStyle(
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.white
                                               ),
                                             ),
-
-                                            SizedBox(height: 3,),
 
                                             Text(
-                                              'Quantité : ' + commande.quantite.toString(),
+                                              commande.nom + ' ' + commande.prenom,
                                               style: TextStyle(
                                                   fontSize: 18.0,
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.white
                                               ),
                                             ),
-                                            Text(
-                                              'Etat : ' + commande.Etat,
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white
-                                              ),
-                                            ),
-                                            SizedBox(height: 3,),
-
-
-                                            Text(
-                                              commande.deliveryadress,
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white
-                                              ),
-                                            ),
-                                            SizedBox(height: 3,),
-
-
-                                            Text(
-                                              commande.date,
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white
-                                              ),
-                                            ),
-                                            SizedBox(height: 3,),
-
-
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  commande.prix + ' DA',
-                                                  style: TextStyle(
-                                                      fontSize: 18.0,
-                                                      fontWeight: FontWeight.w500,
-                                                      color: Colors.white
-                                                  ),
-                                                ),
-
-                                                Text(
-                                                  commande.nom + ' ' + commande.prenom,
-                                                  style: TextStyle(
-                                                      fontSize: 18.0,
-                                                      fontWeight: FontWeight.w500,
-                                                      color: Colors.white
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-
-
                                           ],
                                         ),
-                                      ),
 
 
-
-
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
 
-                            CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Colors.yellow[700],
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/panier');
-                                },
+
+
+
+                                ],
                               ),
                             ),
                           ],
@@ -193,7 +175,7 @@ class _HistoriqueCommandeGestState extends State<HistoriqueCommandeGest> {
                     },
                   ),
                 );
-              }
+              } else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
 
           },
 

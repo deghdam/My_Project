@@ -3,14 +3,19 @@ import 'package:flutter_app/Gestionnaire/Screen/commande_gest.dart';
 import 'package:flutter_app/Gestionnaire/Screen/historique_des_commandes.dart';
 import 'package:flutter_app/Gestionnaire/Screen/mes_commande_gest.dart';
 import 'package:flutter_app/Gestionnaire/Screen/mn_resto.dart';
+import 'package:flutter_app/Gestionnaire/Screen/profil_gest.dart';
+import 'package:flutter_app/Gestionnaire/Screen/signin_gest.dart';
 import 'package:flutter_app/Gestionnaire/widget/categorie_Gest_Caroudel.dart';
-import 'package:flutter_app/Screen/Profil.dart';
+import 'package:flutter_app/Providers/Plat.dart';
+import 'package:flutter_app/Providers/client.dart';
 import 'package:flutter_app/http.dart';
+import 'package:flutter_app/model/personne.dart';
 import 'package:flutter_app/model/restaurent_model.dart';
 class HomeGest extends StatefulWidget {
  // final Restaurent restaurent;
   int id;
-   HomeGest({this.id});
+  String email;
+   HomeGest({this.id,this.email});
 
   @override
   _HomeGestState createState() => _HomeGestState();
@@ -36,12 +41,6 @@ class _HomeGestState extends State<HomeGest> {
         backgroundColor: Color(0x44000000),
         elevation: 0,
         actions: [
-
-          Icon(
-            Icons.search,
-            size:35.0,
-            color: Colors.yellow.shade700,
-          ),
 
           Image(
               fit: BoxFit.cover,
@@ -72,52 +71,66 @@ class _HomeGestState extends State<HomeGest> {
                     decoration: BoxDecoration(
                       color: Colors.black,
                     ),
-                    child:Column(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage(
-                            'assets/sam.JPG',
-                          ),
-                          radius: 80.0,
-                        ),
-                        SizedBox(height: 10.0),
-                        Text(
-                          'Sami Deghdak',
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white
-                          ),),
-
-                        SizedBox(height: 10.0),
-
-                        GestureDetector(
-                          onTap:() => Navigator.push(context,
-                              MaterialPageRoute(
-                                  builder: (_) => Profil()
-                              )),
-                          child: Container(
-                            color: Colors.black45,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(30.0),
-                              child: Container(
-                                color: Colors.yellow.shade700,
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                                  child: new Text(
-                                    'Voir mon pofil',
+                    child:FutureBuilder<List<Personne>>(
+                      future:FetchinfoGest(email: widget.email) ,
+                      builder: (context, snapchat) {
+                        if(snapchat.hasData){
+                          return ListView.builder(
+                            itemCount: snapchat.data.length,
+                            itemBuilder:(BuildContext context, index) {
+                              Personne personne = snapchat.data[index];
+                              return Column(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                      'assets/profile.png',
+                                    ),
+                                    radius: 80.0,
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    personne.prenom + ' ' + personne.nom,
                                     style: TextStyle(
                                         fontSize: 25.0,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white
+                                    ),),
+
+                                  SizedBox(height: 10.0),
+
+                                  GestureDetector(
+                                    onTap:() => Navigator.push(context,
+                                        MaterialPageRoute(
+                                            builder: (_) => Profil_gest(personne: personne,)
+                                        )),
+                                    child: Container(
+                                      color: Colors.black45,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(30.0),
+                                        child: Container(
+                                          color: Colors.yellow.shade700,
+                                          child: Padding(
+                                            padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                                            child: new Text(
+                                              'Voir mon pofil',
+                                              style: TextStyle(
+                                                  fontSize: 25.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                                ],
+                              );
+
+                            },);
+
+                        } else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
+                      },
                     )
 
                 ),
@@ -182,9 +195,16 @@ class _HomeGestState extends State<HomeGest> {
                   borderRadius: BorderRadius.circular(30.0),
                   child: RaisedButton(
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                    onPressed: () => {},
+                    onPressed: () async {
+                      var result = await Deconnexionclient();
+                      print(result["statusCode"]);
+                       if(result["statusCode"] == 200){
+                         Navigator.pushReplacementNamed(
+                             context,'/signingest');
+                          }
+                       },
                     child: new Text(
-                      'Déconnextion',
+                      'Déconnexion',
                       style: TextStyle(
                           fontSize: 25.0,
                           fontWeight: FontWeight.bold,

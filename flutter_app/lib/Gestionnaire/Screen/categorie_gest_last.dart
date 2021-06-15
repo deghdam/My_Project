@@ -37,11 +37,6 @@ class _LastScrGestState extends State<LastScrGest> {
         elevation: 1,
         actions: [
 
-          Icon(
-            Icons.search,
-            size:35.0,
-            color: Colors.yellow.shade700,
-          ),
 
           GestureDetector(
             onTap: () => Navigator.push(context,

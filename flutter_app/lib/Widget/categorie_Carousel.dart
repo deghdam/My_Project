@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Providers/Plat.dart';
+import 'package:flutter_app/http.dart';
 import 'package:flutter_app/model/categorie_model.dart';
 import 'package:flutter_app/Screen/categorie_screen.dart';
 import 'package:flutter_app/Widget/categorie_vertical.dart';
@@ -47,61 +49,69 @@ class CategorieCarousel extends StatelessWidget {
 
         Container(
           height: 260.0,
-          child: ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
-            itemBuilder: (BuildContext context, int index) {
-              return GestureDetector(
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(
-                          builder: (_) => CategorieScreen(
-                            categorie : categories[index],
-                          )
-                  )
-                  ),
-                  child: Container(
-                    margin: EdgeInsets.all(10.0),
-                    child: Container(
-                      width: 250.0,
-                      child: Stack(
+          child: FutureBuilder<List<Categorie>>(
+            future:Fetchcategorie(),
+            builder: (context, snapchat) {
+              if(snapchat.hasData){
+                return Container(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapchat.data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      Categorie categorie = snapchat.data[index] ;
+                      return GestureDetector(
+                        onTap: () => Navigator.push(context,
+                            MaterialPageRoute(
+                                builder: (_) => CategorieScreen(
+                                  categorie : categorie,
+                                )
+                            )
+                        ),
+                        child: Container(
+                          margin: EdgeInsets.all(10.0),
+                          child: Container(
+                            width: 250.0,
+                            child: Stack(
                               alignment: Alignment.topCenter,
                               children: <Widget>[
-                                Hero(
-                                  tag : categories[index].imageUrl,
-                                  child: ClipRRect(
+                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(20.0),
-                                    child: Image(
-                                      height: 210.0,
-                                      width: 240.0,
-                                      image: AssetImage(categories[index].imageUrl),
+                                    child: Image.network(
+                                      imagesUrl + categorie.imageUrl,
+                                      height: 200,
+                                      width: 390,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                ),
                                 Positioned(
                                   top: 210,
                                   child: Center(
                                     child: Text(
-                                      categories[index].type,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.w400,
-                                            letterSpacing: 1.2,
-                                          ),
-                                        ),
+                                      categorie.name,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24.0,
+                                        fontWeight: FontWeight.w400,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
                                   ),
 
                                 ),
                               ],
                             ),
-                    ),
-                  ),
+                          ),
+                        ),
 
+                      );
+                    },
+                  ),
                 );
+              }else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
+
             },
-          ),
+          )
         )
 
       ],

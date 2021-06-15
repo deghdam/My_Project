@@ -31,7 +31,7 @@ class _CategorieGestState extends State<CategorieGest> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           title: Text(
-            widget.categorie.type,
+            widget.categorie.name,
             style: TextStyle(
               fontSize: 25.0,
               fontWeight: FontWeight.w600,
@@ -58,7 +58,7 @@ class _CategorieGestState extends State<CategorieGest> {
                     image: AssetImage("assets/background_gest.png"),
                     fit: BoxFit.cover)),
             child: FutureBuilder<List<Categorie>>(
-              future: FetchPlat(categorie: widget.categorie.type.toLowerCase()),
+              future: FetchPlat(categorie: widget.categorie.name),
               initialData: null,
               builder: (context, snapchat) {
                 if (snapchat.hasData) {
@@ -70,7 +70,7 @@ class _CategorieGestState extends State<CategorieGest> {
                     },
                   );
                 }
-                else return Container();
+                else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
               },
             )));
   }

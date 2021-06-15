@@ -6,13 +6,15 @@ class Commande{
   String prenom;
   String date;
   String nomcommande;
-  int id;
+  String id;
   int quantite;
   String deliveryadress;
   String prix;
   String Etat;
   String imageUrl;
   String nomresto;
+  String laltitude;
+  String longitude;
 
 
   Commande({
@@ -26,7 +28,9 @@ class Commande{
     this.quantite,
     this.Etat,
     this.imageUrl,
-    this.nomresto
+    this.nomresto,
+    this.longitude,
+    this.laltitude
 });
 
 }

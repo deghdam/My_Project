@@ -4,19 +4,25 @@ import 'package:flutter_app/Screen/home_screen.dart';
 import 'package:flutter_app/Screen/lastscreencat.dart';
 import 'package:flutter_app/http.dart';
 import 'package:flutter_app/model/categorie_model.dart';
+import 'package:flutter_app/tools.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class FavorisScreen extends StatefulWidget {
   String email;
-   FavorisScreen({this.email});
+   FavorisScreen(this.email);
 
   @override
   _FavorisScreenState createState() => _FavorisScreenState();
 }
 
 class _FavorisScreenState extends State<FavorisScreen> {
+  @override
+  void didChangeDependencies() async{
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
 
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -38,12 +44,6 @@ class _FavorisScreenState extends State<FavorisScreen> {
         backgroundColor: Color(0x44000000),
         elevation: 1,
         actions: [
-
-          Icon(
-            Icons.search,
-            size:35.0,
-            color: Colors.yellow.shade700,
-          ),
 
           GestureDetector(
             onTap: () => Navigator.push(context,
@@ -71,10 +71,13 @@ class _FavorisScreenState extends State<FavorisScreen> {
                 fit: BoxFit.cover
             )),
         child:  FutureBuilder <List<Categorie>>(
-          future:FetchPlatFavoris(email: widget.email) ,
+          future:FetchPlatFavoris(email:widget.email) ,
           builder: (context, snapchat) {
-            if (snapchat.hasData)
+            if(snapchat.hasError)
+               return Container(child: Center(child:Text('${snapchat.error}')),);
+            else if (snapchat.hasData)
               {
+               // print(snapchat.data);
                 return ListView.builder(
                   scrollDirection: Axis.vertical,
                   itemCount:snapchat.data.length,
@@ -97,8 +100,8 @@ class _FavorisScreenState extends State<FavorisScreen> {
 
                         margin: EdgeInsets.all(10.0),
                         child: Container(
-                          //width: 250.0,
-                          //height: 200,
+                          width: double.infinity,
+                          height: 180,
                           child: Stack(
                             alignment: Alignment.topCenter,
                             children: <Widget>[
@@ -108,7 +111,7 @@ class _FavorisScreenState extends State<FavorisScreen> {
                                   //borderRadius: BorderRadius.circular(20.0),
                                   child: Image.network(
                                     imagesUrl + categorie.imageUrl,
-                                    fit: BoxFit.fitHeight,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
@@ -119,8 +122,8 @@ class _FavorisScreenState extends State<FavorisScreen> {
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black12.withOpacity(0.5),
-                                        blurRadius: 8.0,
-                                        spreadRadius: 3.0,
+                                        blurRadius: 50.0,
+                                        spreadRadius: 120.0,
                                         offset: Offset(
                                           2.0,
                                           2.0,
@@ -150,19 +153,19 @@ class _FavorisScreenState extends State<FavorisScreen> {
                                 left: 15.0,
                                 width: 340,
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12.withOpacity(0.4),
-                                          blurRadius: 8.0,
-                                          spreadRadius: 50.0,
-                                          offset: Offset(
-                                            2.0,
-                                            2.0,
-                                          ),
-                                        )
-                                      ]
-                                  ),
+                                  // decoration: BoxDecoration(
+                                  //     boxShadow: [
+                                  //       BoxShadow(
+                                  //         color: Colors.black12.withOpacity(0.4),
+                                  //         blurRadius: 8.0,
+                                  //         spreadRadius: 10.0,
+                                  //         offset: Offset(
+                                  //           1.0,
+                                  //           1.0,
+                                  //         ),
+                                  //       )
+                                  //     ]
+                                  // ),
 
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -216,8 +219,7 @@ class _FavorisScreenState extends State<FavorisScreen> {
 
                 );
               }
-
-            else return Container();
+            else return Container(child: Center(child: CircularProgressIndicator(color: Colors.white,),),);
           },
         )
       ),

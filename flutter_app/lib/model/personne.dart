@@ -10,5 +10,5 @@ class Personne{
   String adress;
 
 
-  Personne({this.nom,this.prenom});
+  Personne({this.nom,this.prenom,this.email,this.adress,this.phone});
 }
