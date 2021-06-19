@@ -4,6 +4,7 @@ import 'package:flutter_app/Providers/restaurent.dart';
 import 'package:flutter_app/model/commande.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:toast/toast.dart';
+import 'package:flutter_app/Gestionnaire/map.dart';
 
 
 class MesCommandes extends StatefulWidget {
@@ -15,9 +16,10 @@ class MesCommandes extends StatefulWidget {
 }
 
 class _MesCommandesState extends State<MesCommandes> {
+  Commande commande;
+  List<Commande> commandes=[];
   @override
   Widget build(BuildContext context) {
-    //print(widget.id);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -59,12 +61,15 @@ class _MesCommandesState extends State<MesCommandes> {
               }else
             if (snapchat.hasData)
             {
+              commandes.addAll(snapchat.data);
               return Container(
                 margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 80),
 
                 child: ListView.builder(
                     itemCount: snapchat.data.length,
                     itemBuilder: (context, index) {
+                       commande = snapchat.data[index];
+                     // print(commande.longitude);
 
                       return aCommande(snapchat.data[index]);
                     },
@@ -96,6 +101,12 @@ class _MesCommandesState extends State<MesCommandes> {
             ),
             color: Colors.yellow.shade700,
             onPressed: () {
+              // print(commande.longitude);
+              Navigator.push(context,
+                  MaterialPageRoute(
+                      builder: (_) => Map(commandes:commandes ,)
+
+                  ));
 
             }
         ),

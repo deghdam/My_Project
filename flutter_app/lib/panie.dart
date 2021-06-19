@@ -1,5 +1,6 @@
 import 'package:flutter_app/model/categorie_model.dart';
 import 'package:flutter_app/mysqlite.dart';
+import 'package:flutter_app/tools.dart';
 import 'package:sqflite/sqflite.dart';
 
 const tablename ='panier';
@@ -10,10 +11,12 @@ class PanierMethode{
     String sql = "select * from $tablename where id  = ${plat.id}";
     List<Categorie> result = [];
     List<Map<String, dynamic>> resultquery = await _db.rawQuery(sql);
+    String email = await read('email');
     Map<String, dynamic> platmap = new Map();
     if(resultquery.length == 0) {
       platmap["id"] = plat.id;
       platmap["name"] = plat.name;
+      platmap["email"] = email;
       platmap["prix"] = plat.prix;
       platmap["imageUrl"] = plat.imageUrl;
       platmap["ingredien"] = plat.ingredien;
@@ -35,12 +38,19 @@ class PanierMethode{
     int result = await _db.delete(tablename,where: 'id = ?', whereArgs: [id]);
     return result;
   }
+  static deleteallPlat()async{
+    Database _db = await SQLite.getdb();
+    int result = await _db.delete(tablename);
+    return result;
+  }
 
 
 
  static Future<List<Categorie>> GetPlat() async {
     Database _db = await SQLite.getdb();
-    String sql = "SELECT * FROM $tablename";
+
+    String email = await read('email');
+    String sql = "SELECT * FROM $tablename where email like '$email'";
     List<Categorie> result = [];
     List<Map<String, dynamic>> resultquery = await _db.rawQuery(sql);
     for (var i = 0; i <= resultquery.length - 1; i++) {
@@ -52,6 +62,7 @@ class PanierMethode{
         raiting: resultquery[i]["raiting"],
         nresto: resultquery[i]["nresto"],
         id_resto: resultquery[i]["id_resto"],
+        email: resultquery[i]["email"],
         name: resultquery[i]["name"],
         type: resultquery[i]["type"],
         quantite: resultquery[i]["quantite"].toString()

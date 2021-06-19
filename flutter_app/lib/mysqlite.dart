@@ -13,6 +13,7 @@ class SQLite {
   static List<String> _createtablestatement = [
     "Create table panier("
         "id INTEGER PRIMARY KEY,"
+        "email Text,"
         "name text,"
         "prix Real,"
         "imageUrl text,"

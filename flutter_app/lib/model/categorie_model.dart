@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class Categorie{
   String id;
   String imageUrl;
+  String email;
   String type;
   String name;
   String prix;
@@ -24,6 +25,7 @@ class Categorie{
 Categorie({
   this.id,
   this.imageUrl,
+  this.email,
   this.type,
   this.name,
   this.prix,

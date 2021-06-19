@@ -17,11 +17,20 @@ class ModifierPlat extends StatefulWidget {
 }
 
 class _ModifierPlatState extends State<ModifierPlat> {
+  File _image;
   PickedFile _imageFile;
   final ImagePicker _picker = ImagePicker();
   final _nomplatController = TextEditingController();
   final _prixController = TextEditingController();
   final _ingredientsController = TextEditingController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     _nomplatController.text =  widget.categorie.name;
+    _prixController.text =  widget.categorie.prix;
+    _ingredientsController.text =  widget.categorie.ingredien;
+  }
   @override
   Widget build(BuildContext context) {
    // print(widget.categorie.id);
@@ -192,6 +201,16 @@ class _ModifierPlatState extends State<ModifierPlat> {
                             );
 
                             if (result['statusCode'] == 200) {
+                              if(_image != null){
+                                File file=File(_image.path);
+                                bool result= await uploadFile(file: file,type: 'plat',id: widget.categorie.id.toString());
+                                // if(!result){
+                                //
+                                // }
+                                // else{
+                                //
+                                // }
+                              }
                               Navigator.pop(
                                   context,
                                   MaterialPageRoute(
@@ -221,10 +240,18 @@ class _ModifierPlatState extends State<ModifierPlat> {
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-         Image.network(
-           _imageFile == null ? imagesUrl + widget.categorie.imageUrl : FileImage(File(_imageFile.path))
+        (_image!=null)?
+        Container(
+          width:double.infinity,height: 250
+          ,
+          child: Semantics(
+            child: Image.file(File(_image.path),fit: BoxFit.cover
+              ,),),
+        )
+            : Image.network(
+          imagesUrl + widget.categorie.imageUrl,fit: BoxFit.cover,
 
-          ),
+        ),
 
         Positioned(
           bottom: 15.0,
@@ -292,7 +319,7 @@ class _ModifierPlatState extends State<ModifierPlat> {
       source: source,
     );
     setState(() {
-      _imageFile = pickedFile;
+      _image =File(pickedFile.path);
     });
   }
 }

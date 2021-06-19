@@ -6,8 +6,8 @@ import 'package:async/async.dart';
 import 'dart:convert';
 
 
-const String _urlBase="http://192.168.43.171:8000/api";
-const String imagesUrl="http://192.168.43.171:8000/storage/images/";
+const String _urlBase="http://26.45.176.98:8000/api";
+const String imagesUrl="http://26.45.176.98:8000/storage/images/";
   Map res;
 Future<Map<String,dynamic>>  myHttpPost({String route,dynamic body})async{
   String token=await read('token');
@@ -99,23 +99,24 @@ try {
   // get file length
   var length = await file.length(); //imageFile is your image file
   Map<String, String> headers = {
+    'Content-Type': 'multipart/form-data',
     "Accept": "application/json",
     "Authorization": "Bearer " + token
   }; // ignore this headers if there is no authentication
 
   // string to uri
-  var uri = Uri.parse(_urlBase + '/upload');
+  var uri = Uri.parse(_urlBase + '/upload'+'/'+'$id'+'/'+'$type');
 
   // create multipart request
   var request = new http.MultipartRequest("POST", uri);
 
   // multipart that takes file
-  var multipartFileSign = new http.MultipartFile(
-      '${type}_${id}', stream, length,
-      filename: basename(file.path));
+  // var multipartFileSign = new http.MultipartFile(
+  //     '$file', stream, length,
+  //     filename: basename(file.path));
 
   // add file to multipart
-  request.files.add(multipartFileSign);
+  request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
   //add headers
   request.headers.addAll(headers);
@@ -124,6 +125,8 @@ try {
   request.fields['type'] = '$type';
   request.fields['id'] = '$id';
 
+
+
   // send
   var response = await request.send();
   response.stream.transform(utf8.decoder).listen((value) {
@@ -131,6 +134,11 @@ try {
     print(a);
     a++;
   });
+
+  print('////');
+  print(id);
+  print(type);
+  print(response.statusCode);
   // listen for response
   if ((response.statusCode) == 200) {
     return true;

@@ -26,6 +26,7 @@ class ModifierRest extends StatefulWidget {
 class _ModifierRestState extends State<ModifierRest> {
   PickedFile _imageFile;
   final ImagePicker _picker = ImagePicker();
+  File _image;
 
   final _nomrestaurantController = TextEditingController();
   final _HoraireController = TextEditingController();
@@ -42,7 +43,7 @@ class _ModifierRestState extends State<ModifierRest> {
   }
   @override
   Widget build(BuildContext context) {
-   // print(widget.id);
+    //print(widget.id);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -245,16 +246,19 @@ class _ModifierRestState extends State<ModifierRest> {
                                   id: widget.id,
                                 );
 
+                               // print(result['statusCode']);
+
                                 if (result['statusCode'] == 200) {
-                                  if(_imageFile != null){
-                                  File file=File(_imageFile.path);
-                                  bool result= await uploadFile(file: file,type: 'restaurant',id: widget.restaurent.id.toString());
-                                  if(!result){
-
-                                  }
-                                  else{
-
-                                  }
+                                  print(widget.id);
+                                  if(_image != null){
+                                  File file=File(_image.path);
+                                  bool result= await uploadFile(file: file,type: 'restaurant',id: widget.id.toString());
+                                  // if(!result){
+                                  //
+                                  // }
+                                  // else{
+                                  //
+                                  // }
                                   }
                                   Navigator.pop(
                                       context,
@@ -285,12 +289,12 @@ class _ModifierRestState extends State<ModifierRest> {
   Widget imageProfile() {
     return Center(
       child: Stack(children: <Widget>[
-       (_imageFile!=null)?
+       (_image!=null)?
       Container(
           width:double.infinity,height: 250
         ,
         child: Semantics(
-            child: Image.file(File(_imageFile.path),fit: BoxFit.cover
+            child: Image.file(File(_image.path),fit: BoxFit.cover
               ,),),
       )
           : Image.network(
@@ -364,7 +368,7 @@ class _ModifierRestState extends State<ModifierRest> {
       source: source,
     );
     setState(() {
-      _imageFile = pickedFile;
+      _image =File(pickedFile.path);
     });
   }
 }
